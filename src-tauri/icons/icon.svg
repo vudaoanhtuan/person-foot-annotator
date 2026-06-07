@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Blue rounded background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="180" fill="#2563eb"/>
+  <!-- White person glyph -->
+  <g fill="#ffffff">
+    <!-- Head -->
+    <circle cx="512" cy="300" r="110"/>
+    <!-- Torso / shoulders -->
+    <path d="M512 450
+             c -150 0 -240 90 -240 230
+             v 60
+             a 30 30 0 0 0 30 30
+             h 420
+             a 30 30 0 0 0 30 -30
+             v -60
+             c 0 -140 -90 -230 -240 -230
+             z"/>
+  </g>
+  <!-- Foot marker dot -->
+  <circle cx="512" cy="860" r="46" fill="#ffffff"/>
+</svg>

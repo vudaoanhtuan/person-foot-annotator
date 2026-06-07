@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body { user-select: none; }
+
+/* Inner scrollable areas don't propagate bounce to the document. */
+.overflow-y-auto,
+.overflow-y-scroll,
+.overflow-auto,
+.overflow-scroll {
+  overscroll-behavior: contain;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Styling ::-webkit-scrollbar opts out of macOS auto-hiding overlay
+   scrollbars, so the bar stays visible whenever content overflows. */
+.always-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.always-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d4; /* neutral-300 */
+  border-radius: 4px;
+}
+.always-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3; /* neutral-400 */
+}
+.always-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
