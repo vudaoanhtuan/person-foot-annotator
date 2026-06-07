@@ -85,6 +85,15 @@ export const useDatasetStore = create<DatasetState>((set, get) => ({
   },
 
   setImageSize: (size) => {
+    // No-op on equal size: callers (e.g. the img ref callback in
+    // ContextViewer) may fire on every render, and always storing a fresh
+    // object would re-render subscribers in an infinite loop.
+    const prev = get().imageSize;
+    if (
+      prev === size ||
+      (prev && size && prev.width === size.width && prev.height === size.height)
+    )
+      return;
     set({ imageSize: size });
   },
 

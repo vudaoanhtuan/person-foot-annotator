@@ -33,20 +33,20 @@ export function useToggleLeftSidebarHotkey() {
 }
 
 /**
- * Space / Right arrow -> next image; Shift+Space / Left arrow -> previous image.
+ * Right/Down arrow -> next image; Left/Up arrow -> previous image.
+ * Space / Shift+Space are owned by the Image menu accelerators (native), so
+ * only the arrow keys are handled here to avoid double-firing.
  */
 export function useNavigationHotkeys() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return;
       const tag = (e.target as HTMLElement | null)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA") return;
       let direction: 1 | -1 | 0 = 0;
-      if (e.key === " ") {
-        direction = e.shiftKey ? -1 : 1;
-      } else if (!e.shiftKey && (e.key === "ArrowLeft" || e.key === "ArrowUp")) {
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
         direction = -1;
-      } else if (!e.shiftKey && (e.key === "ArrowRight" || e.key === "ArrowDown")) {
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         direction = 1;
       }
       if (direction === 0) return;

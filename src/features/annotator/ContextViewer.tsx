@@ -147,18 +147,41 @@ export default function ContextViewer({
     setImageSize({ width: naturalWidth, height: naturalHeight });
   };
 
-  const onClick = (e: React.MouseEvent) => {
-    if (!layout || e.button !== 0) return;
+  const moveFootTo = (clientX: number, clientY: number) => {
+    if (!layout) return;
     // Content-relative coordinates; scroll position is already baked into the rect.
     const rect = contentRef.current!.getBoundingClientRect();
     const { cx, cy } = containerToImage(
-      e.clientX - rect.left,
-      e.clientY - rect.top,
+      clientX - rect.left,
+      clientY - rect.top,
       layout,
     );
     const foot = imageToFoot(cx, cy, bb);
     if (!foot) return;
     useFootStore.getState().setFoot(foot);
+  };
+
+  // Press-and-drag annotation: the foot dot tracks the cursor while the left
+  // button is held. Pointer capture keeps move/up events flowing to the
+  // content even when the pointer leaves it.
+  const draggingRef = useRef(false);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
+    draggingRef.current = true;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    moveFootTo(e.clientX, e.clientY);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    moveFootTo(e.clientX, e.clientY);
+  };
+
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    draggingRef.current = false;
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   const imageStyle =
@@ -190,7 +213,9 @@ export default function ContextViewer({
     >
       <div
         ref={contentRef}
-        onClick={onClick}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
         className="relative cursor-crosshair"
         style={
           layout

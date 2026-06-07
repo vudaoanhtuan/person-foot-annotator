@@ -4,8 +4,8 @@ import { useDatasetStore } from "@/store/datasetStore";
 import {
   annotStatus,
   viewStatus,
-  ANNOT_STATUS_BG,
   ANNOT_STATUS_LABEL,
+  VIEW_STATUS_BG,
   VIEW_STATUS_LABEL,
 } from "@/lib/status";
 
@@ -74,8 +74,8 @@ export default function ImageList() {
                   title={`${name} — ${ANNOT_STATUS_LABEL[as]} · ${VIEW_STATUS_LABEL[vs]}`}
                 >
                   <span
-                    className={`inline-block w-2 h-2 rounded-full shrink-0 ${ANNOT_STATUS_BG[as]}`}
-                    aria-label={ANNOT_STATUS_LABEL[as]}
+                    className={`inline-block w-2 h-2 rounded-full shrink-0 ${VIEW_STATUS_BG[vs]}`}
+                    aria-label={VIEW_STATUS_LABEL[vs]}
                   />
                   <span className="truncate">{name}</span>
                 </div>

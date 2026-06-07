@@ -52,15 +52,19 @@ export async function installAppMenu() {
     items: [openItem, saveItem, closeItem],
   });
 
+  // Space/Shift+Space are owned by these native accelerators; hotkeys.ts only
+  // handles the arrow-key variants to avoid double-firing.
   const nextItem = await MenuItem.new({
     id: "image-next",
     text: "Next Image",
+    accelerator: "Space",
     action: () => navigate(1),
   });
 
   const prevItem = await MenuItem.new({
     id: "image-prev",
     text: "Previous Image",
+    accelerator: "Shift+Space",
     action: () => navigate(-1),
   });
 

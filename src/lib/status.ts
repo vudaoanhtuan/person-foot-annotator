@@ -27,3 +27,8 @@ export const VIEW_STATUS_LABEL: Record<ViewStatus, string> = {
   unviewed: "Unviewed",
   viewed: "Viewed",
 };
+
+export const VIEW_STATUS_BG: Record<ViewStatus, string> = {
+  unviewed: "bg-neutral-300",
+  viewed: "bg-emerald-500",
+};
