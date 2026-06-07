@@ -31,6 +31,7 @@ export default function ContextViewer({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
   const [viewport, setViewport] = useState({ width: 0, height: 0 });
   const [naturalSize, setNaturalSize] = useState<{ width: number; height: number } | null>(null);
   // Explicit zoom scale (image px -> screen px); null = default fit.
@@ -42,7 +43,16 @@ export default function ContextViewer({
     const el = scrollRef.current;
     if (!el) return;
     const update = () =>
-      setViewport({ width: el.clientWidth, height: el.clientHeight });
+      // Keep the previous object when the size is unchanged: ResizeObserver
+      // ticks (e.g. Windows scrollbars appearing/disappearing) must not force
+      // re-renders with a fresh-but-equal state object.
+      setViewport((prev) => {
+        const width = el.clientWidth;
+        const height = el.clientHeight;
+        return prev.width === width && prev.height === height
+          ? prev
+          : { width, height };
+      });
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -147,6 +157,17 @@ export default function ContextViewer({
     setImageSize({ width: naturalWidth, height: naturalHeight });
   };
 
+  // The component remounts per image; a memory-cached image can already be
+  // complete before onLoad is attached (WebView2 marks cached images complete
+  // synchronously), so also check once after mount. This must run in an
+  // effect, not the ref callback: setState during ref attachment happens in
+  // React's commit phase and counts toward the nested-update limit.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth > 0) onImgLoaded(img);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const moveFootTo = (clientX: number, clientY: number) => {
     if (!layout) return;
     // Content-relative coordinates; scroll position is already baked into the rect.
@@ -228,12 +249,12 @@ export default function ContextViewer({
           alt={record.image_file}
           draggable={false}
           className={`absolute pointer-events-none max-w-none ${imageStyle ? "" : "opacity-0"}`}
-          style={imageStyle}
-          // The component remounts per image; a memory-cached image can already be
-          // complete before onLoad is attached, so also check in the ref callback.
-          ref={(img) => {
-            if (img && img.complete && img.naturalWidth > 0) onImgLoaded(img);
-          }}
+          // Collapse to 0x0 until the layout is known: at natural size the
+          // hidden image would overflow the scroll container and flash
+          // scrollbars (which occupy space on Windows, skewing the measured
+          // viewport). naturalWidth/naturalHeight are unaffected by this.
+          style={imageStyle ?? { width: 0, height: 0 }}
+          ref={imgRef}
           onLoad={(e) => onImgLoaded(e.currentTarget)}
         />
         {layout && bbTopLeft && bbBottomRight && (
