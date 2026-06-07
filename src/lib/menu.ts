@@ -13,10 +13,12 @@ function navigate(direction: 1 | -1) {
 }
 
 export async function installAppMenu() {
+  // No accelerators on any menu item: native accelerators don't fire on
+  // Windows while the webview has focus, so all keyboard shortcuts are
+  // handled uniformly by the JS listeners in hotkeys.ts instead.
   const openItem = await MenuItem.new({
     id: "open-dataset",
     text: "Open Dataset",
-    accelerator: "CmdOrCtrl+O",
     action: () => {
       void pickAndOpenDataset();
     },
@@ -25,7 +27,6 @@ export async function installAppMenu() {
   const saveItem = await MenuItem.new({
     id: "save",
     text: "Save",
-    accelerator: "CmdOrCtrl+S",
     action: () => {
       void useFootStore.getState().flush();
     },
@@ -34,7 +35,6 @@ export async function installAppMenu() {
   const closeItem = await MenuItem.new({
     id: "close-dataset",
     text: "Close Dataset",
-    accelerator: "CmdOrCtrl+W",
     action: () => {
       void closeDataset();
     },
@@ -52,19 +52,15 @@ export async function installAppMenu() {
     items: [openItem, saveItem, closeItem],
   });
 
-  // Space/Shift+Space are owned by these native accelerators; hotkeys.ts only
-  // handles the arrow-key variants to avoid double-firing.
   const nextItem = await MenuItem.new({
     id: "image-next",
     text: "Next Image",
-    accelerator: "Space",
     action: () => navigate(1),
   });
 
   const prevItem = await MenuItem.new({
     id: "image-prev",
     text: "Previous Image",
-    accelerator: "Shift+Space",
     action: () => navigate(-1),
   });
 
@@ -73,7 +69,6 @@ export async function installAppMenu() {
   const deleteItem = await MenuItem.new({
     id: "image-delete",
     text: "Delete Image",
-    accelerator: "CmdOrCtrl+Backspace",
     action: () => {
       void deleteCurrentImage();
     },
@@ -87,7 +82,6 @@ export async function installAppMenu() {
   const toggleLeftSidebarItem = await CheckMenuItem.new({
     id: "view-toggle-left-sidebar",
     text: "Show Left Sidebar",
-    accelerator: "CmdOrCtrl+L",
     checked: useUiStore.getState().leftSidebarVisible,
     action: () => {
       useUiStore.getState().toggleLeftSidebar();

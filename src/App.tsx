@@ -5,7 +5,12 @@ import Landing from "@/shared/components/Landing";
 import AnnotatorWorkspace from "@/features/annotator/AnnotatorWorkspace";
 import { useDatasetStore } from "@/store/datasetStore";
 import { useFootStore } from "@/store/footStore";
-import { useOpenDatasetHotkey, useToggleLeftSidebarHotkey } from "@/lib/hotkeys";
+import {
+  useOpenDatasetHotkey,
+  useSaveHotkey,
+  useCloseDatasetHotkey,
+  useToggleLeftSidebarHotkey,
+} from "@/lib/hotkeys";
 import { installAppMenu } from "@/lib/menu";
 
 export default function App() {
@@ -13,6 +18,8 @@ export default function App() {
   const [version, setVersion] = useState("");
 
   useOpenDatasetHotkey();
+  useSaveHotkey();
+  useCloseDatasetHotkey();
   useToggleLeftSidebarHotkey();
 
   useEffect(() => {
