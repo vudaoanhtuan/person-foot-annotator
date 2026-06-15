@@ -13,10 +13,10 @@ export type ContainLayout = {
 
 export function bbRect(record: FootRecord): Rect {
   return {
-    xMin: record.bb_in_context_x_min,
-    yMin: record.bb_in_context_y_min,
-    xMax: record.bb_in_context_x_max,
-    yMax: record.bb_in_context_y_max,
+    xMin: record.context_image_x,
+    yMin: record.context_image_y,
+    xMax: record.context_image_x + record.image_width,
+    yMax: record.context_image_y + record.image_height,
   };
 }
 

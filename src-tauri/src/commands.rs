@@ -4,7 +4,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 fn db_path(dataset: &str) -> PathBuf {
-    Path::new(dataset).join("records.sqlite")
+    Path::new(dataset).join("db.sqlite")
 }
 
 fn images_dir(dataset: &str) -> PathBuf {
@@ -24,10 +24,10 @@ pub struct FootRecord {
     image_file: String,
     foot_x: Option<f64>,
     foot_y: Option<f64>,
-    bb_in_context_x_min: f64,
-    bb_in_context_y_min: f64,
-    bb_in_context_x_max: f64,
-    bb_in_context_y_max: f64,
+    image_width: f64,
+    image_height: f64,
+    context_image_x: f64,
+    context_image_y: f64,
 }
 
 #[derive(Serialize)]
@@ -39,7 +39,7 @@ pub struct OpenedDataset {
 pub fn open_dataset(path: String) -> Result<OpenedDataset, String> {
     let db = db_path(&path);
     if !db.is_file() {
-        return Err(format!("records.sqlite not found under: {path}"));
+        return Err(format!("db.sqlite not found under: {path}"));
     }
     if !context_dir(&path).is_dir() {
         return Err(format!("'context_images' subfolder not found under: {path}"));
@@ -48,8 +48,8 @@ pub fn open_dataset(path: String) -> Result<OpenedDataset, String> {
     let mut stmt = conn
         .prepare(
             "SELECT image_file, foot_x, foot_y, \
-             bb_in_context_x_min, bb_in_context_y_min, \
-             bb_in_context_x_max, bb_in_context_y_max \
+             image_width, image_height, \
+             context_image_x, context_image_y \
              FROM records ORDER BY image_file",
         )
         .map_err(|e| e.to_string())?;
@@ -59,10 +59,10 @@ pub fn open_dataset(path: String) -> Result<OpenedDataset, String> {
                 image_file: row.get(0)?,
                 foot_x: row.get(1)?,
                 foot_y: row.get(2)?,
-                bb_in_context_x_min: row.get(3)?,
-                bb_in_context_y_min: row.get(4)?,
-                bb_in_context_x_max: row.get(5)?,
-                bb_in_context_y_max: row.get(6)?,
+                image_width: row.get(3)?,
+                image_height: row.get(4)?,
+                context_image_x: row.get(5)?,
+                context_image_y: row.get(6)?,
             })
         })
         .map_err(|e| e.to_string())?;

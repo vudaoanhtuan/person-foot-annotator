@@ -9,14 +9,14 @@ Open a folder containing:
 
 - `images/` — bounding-box crop images
 - `context_images/` — extended bounding-box images (same filenames as `images/`)
-- `records.sqlite` — table `records` with columns:
+- `db.sqlite` — table `records` with columns:
   - `image_file` (TEXT)
   - `foot_x`, `foot_y` (REAL, nullable) — normalized relative to the **center of
     the bounding-box image**: bb edges map to ±0.5, values outside that range
     are allowed (foot outside the bb / context image)
-  - `bb_in_context_x_min`, `bb_in_context_y_min`, `bb_in_context_x_max`,
-    `bb_in_context_y_max` (REAL) — absolute pixel coords of the bb inside the
-    context image
+  - `image_width`, `image_height` (REAL) — pixel size of the bb crop image
+  - `context_image_x`, `context_image_y` (REAL) — pixel coords of the bb image's
+    top-left corner inside the context image
 
 ## Annotation
 

@@ -37,7 +37,7 @@ export default function Landing({ version }: { version: string }) {
       )}
       <p className="text-xs text-neutral-500 max-w-md text-center">
         Select a folder containing <code>images/</code>,{" "}
-        <code>context_images/</code> and <code>records.sqlite</code>.
+        <code>context_images/</code> and <code>db.sqlite</code>.
       </p>
     </div>
   );
